@@ -115,7 +115,7 @@ account	followers	median	views	hook
 python3 swipe.py captured.tsv --out ~/.claude/instagram/swipe.md
 ```
 
-It computes the outlier multiple, names the hook formula using the same 26
+It computes the outlier multiple, names the hook formula using the same 28
 formulas `/ig-reel` writes from, scores each hook with `hookscore.py`, and
 prints what separates the top third from the bottom third.
 
