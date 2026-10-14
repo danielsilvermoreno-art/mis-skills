@@ -63,6 +63,14 @@ def classify(hook, formulas):
     return None, "unclassified"
 
 
+def to_int(text):
+    """'48,000' and '48.000' are thousands; '10750.0' or '10750,5' is a decimal."""
+    text = text.strip()
+    text = re.sub(r"[.,]\d{1,2}$", "", text)     # drop a short decimal tail
+    digits = re.sub(r"[^\d]", "", text)
+    return int(digits) if digits else None
+
+
 def read_rows(path):
     raw = sys.stdin.read() if path == "-" else open(path, encoding="utf-8").read()
     lines = [l for l in raw.splitlines() if l.strip() and not l.lstrip().startswith("#")]
@@ -79,13 +87,9 @@ def read_rows(path):
         if len(cells) < len(cols):
             cells += [""] * (len(cols) - len(cells))
         r = dict(zip(cols, [c.strip() for c in cells]))
-        try:
-            r["views"] = int(re.sub(r"[^\d]", "", r.get("views", "")) or 0)
-        except ValueError:
-            continue
+        r["views"] = to_int(r.get("views", "")) or 0
         for k in ("followers", "median"):
-            digits = re.sub(r"[^\d]", "", r.get(k, "") or "")
-            r[k] = int(digits) if digits else None
+            r[k] = to_int(r.get(k, "") or "")
         if r["views"] and r.get("hook"):
             rows.append(r)
     return rows
